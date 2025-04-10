@@ -3,7 +3,7 @@ web-app:
     - ip: 192.168.1.12
     - port: 1000
 
-  -web-server:
+  - web-server:
     - ip: 192.168.1.13
     - port: 8080
 
