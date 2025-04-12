@@ -1,5 +1,6 @@
 import yaml
 import json
+
 def check_file_type(file: str):
     with open(file, "r") as f:
         content = f.read()
