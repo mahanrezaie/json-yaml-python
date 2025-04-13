@@ -33,8 +33,16 @@ class Config_manager():
         output_file = open(output_file, "w")
         yaml_obj = yaml.safe_load(self.content)
         json.dump(yaml_obj, output_file)
+     
+    def update_json(self, data, output_file):
+        with open(output_file, "w") as f:
+            json.dump(data, f, indent= 4)
 
 
+    def update_yaml(self, data, output_file):
+        with open(output_file, "w") as f:
+            yaml.dump(data, f)
+        
     def convertor(self, file, output_file):
         file_type = self.check_file_type(file)
         if file_type == "JSON":
@@ -76,7 +84,8 @@ class ConfCli(cmd.Cmd, Config_manager):
         print("Goodbye")
         return True
 
-        
+    def do_update(self, arg):
+        "Update the config by key and value"
 
 def get_file(prompt):
     while True:
