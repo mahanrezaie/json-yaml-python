@@ -19,8 +19,11 @@ class Config_manager():
         except yaml.YAMLError:
             pass
     
-        
-    
+    def read_config(self, file):
+        with open(file, "r") as f:
+            content = f.read()
+        return content
+
     def json_to_yaml(self, output_file):
         output_file = open(output_file, "w")
         json_obj = json.loads(self.content)
@@ -62,6 +65,16 @@ class ConfCli(cmd.Cmd, Config_manager):
         output_file = input(f" please enter a name your .{file_type} for output: ")
         self.convertor(file, output_file)
         
+    def do_read(self, arg):
+        "Reads a config"
+        file = get_file("Enter the file you want to read: ")
+        content = self.read_config(file)
+        print(content)
+
+    def do_quit(self, arg):
+        "Quits the cli"
+        print("Goodbye")
+        return True
 
         
 
@@ -73,7 +86,6 @@ def get_file(prompt):
                 return file  # Return the file if it exists
         except FileNotFoundError:
             print("File does not exist. Please try again.")
-
 #Config = Config_manager("test2.yaml", "test2.json")
 #print(Config.check_file_type())
 #Config = Config_manager()
