@@ -1,15 +1,17 @@
+from contextlib import contextmanager
 import yaml
 import json
 
 
 class Config_manager():
-    def __init__(self, file, input_file, output_file):
+    def __init__(self, file, output_file):
         self.file = file
         with open(file, "r") as f:
             self.content = f.read()
-        self.input_file = open(file, "r")
-        self.output_file = open(file, "w")
+        self.output_file = output_file
 
+    def __str__(self):
+        return self.content
 
     def check_file_type(self):
         
@@ -20,30 +22,30 @@ class Config_manager():
             pass
     
         try:
-            if self.content.strip().startswith("---"): # it is common to use --- to start a yaml file
-                yaml.safe_load(self.content)
-                return "YAML"
+            yaml.safe_load(self.content)
+            return "YAML"
         except yaml.YAMLError:
             pass
     
-        return "NONE"
+        
     
-    def json_to_yaml(self):
-        json_obj = json.loads(self.input_file)
-        yaml.dump(json_obj, self.output_file)
+    def json_to_yaml(self, output_file):
+        json_obj = json.loads(self.content)
+        yaml.dump(json_obj, output_file)
 
-    def yaml_to_json(self):
-        yaml_obj = yaml.safe_load(self.input_file)
-        json.dump(yaml_obj, self.output_file)
+    def yaml_to_json(self, output_file):
+        yaml_obj = yaml.safe_load(self.content)
+        json.dump(yaml_obj, output_file)
 
 
     def convertor(self):
+        output_file = open(self.output_file, "w")
         file_type = self.check_file_type()
         if file_type == "JSON":
-            self.json_to_yaml()
+            self.json_to_yaml(output_file)
 
         elif file_type == "YAML":
-            self.yaml_to_json()
+            self.yaml_to_json(output_file)
 
         elif file_type == "NONE":
             return f"ERROR: the {self.file} is not a valid yaml or json, please try again.(yaml file should be started with ---)"
@@ -56,6 +58,7 @@ class Config_manager():
 
 
 
-
-
+Config = Config_manager("test2.yaml", "test2.json")
+print(Config.check_file_type())
+Config.convertor()
 
