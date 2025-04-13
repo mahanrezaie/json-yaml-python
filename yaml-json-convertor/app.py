@@ -46,8 +46,8 @@ class Config_manager():
         elif file_type == "YAML":
             self.yaml_to_json(output_file)
 
-        elif file_type == "NONE":
-            return f"ERROR: the {self.file} is not a valid yaml or json, please try again.(yaml file should be started with ---)"
+        else:
+             print(f"ERROR: the {self.file} is not a valid yaml or json, please try again.(yaml file should be started with ---)")
 
 
         
