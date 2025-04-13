@@ -1,5 +1,6 @@
 import yaml
 import json
+import cmd
 
 
 class Config_manager():
@@ -51,13 +52,33 @@ class Config_manager():
 
 
         
+class ConfCli(cmd.Cmd, Config_manager):
+    intro = "Welcome to the Configuration manager cli!"
+    prompt = "manager-cli"
+    def __init__(self):
+        super().__init__()
+
+    def do_convert(self, arg):
+        "Convert json to yaml or yaml to json."
+        file = get_file("Enter the file you want to convert: ")
+
+
+        
 
 
 
 
 
+def get_file(prompt):
+    while True:
+        file = input(prompt)  # Get file path from user
+        try:
+            with open(file, "r") as f:
+                return file  # Return the file if it exists
+        except FileNotFoundError:
+            print("File does not exist. Please try again.")
 
-Config = Config_manager("test2.yaml", "test2.json")
-print(Config.check_file_type())
+#Config = Config_manager("test2.yaml", "test2.json")
+#print(Config.check_file_type())
 Config.convertor()
 
