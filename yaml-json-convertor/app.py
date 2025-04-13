@@ -4,17 +4,9 @@ import cmd
 
 
 class Config_manager():
-    def __init__(self, file, output_file):
-        self.file = file
+    def check_file_type(self, file):
         with open(file, "r") as f:
             self.content = f.read()
-        self.output_file = output_file
-
-    def __str__(self):
-        return self.content
-
-    def check_file_type(self):
-        
         try:
             json.loads(self.content)
             return "JSON"
@@ -30,44 +22,48 @@ class Config_manager():
         
     
     def json_to_yaml(self, output_file):
+        output_file = open(output_file, "w")
         json_obj = json.loads(self.content)
         yaml.dump(json_obj, output_file)
 
     def yaml_to_json(self, output_file):
+        output_file = open(output_file, "w")
         yaml_obj = yaml.safe_load(self.content)
         json.dump(yaml_obj, output_file)
 
 
-    def convertor(self):
-        output_file = open(self.output_file, "w")
-        file_type = self.check_file_type()
+    def convertor(self, file, output_file):
+        file_type = self.check_file_type(file)
         if file_type == "JSON":
-            self.json_to_yaml(output_file)
+            self.json_to_yaml(f"{output_file}.yaml")
 
         elif file_type == "YAML":
-            self.yaml_to_json(output_file)
+            self.yaml_to_json(f"{output_file}.json")
 
         else:
-             print(f"ERROR: the {self.file} is not a valid yaml or json, please try again.(yaml file should be started with ---)")
+             print(f"ERROR: the {file} is not a valid yaml or json, please try again.(yaml file should be started with ---)")
 
 
         
 class ConfCli(cmd.Cmd, Config_manager):
     intro = "Welcome to the Configuration manager cli!"
-    prompt = "manager-cli"
+    prompt = "manager-cli: "
     def __init__(self):
         super().__init__()
 
     def do_convert(self, arg):
         "Convert json to yaml or yaml to json."
         file = get_file("Enter the file you want to convert: ")
-
-
+        file_type = self.check_file_type(file)
+        if file_type == "YAML":
+            file_type = "json"
+        elif file_type == "JSON":
+            file_type = "yaml"
+        output_file = input(f" please enter a name your .{file_type} for output: ")
+        self.convertor(file, output_file)
         
 
-
-
-
+        
 
 def get_file(prompt):
     while True:
@@ -80,5 +76,7 @@ def get_file(prompt):
 
 #Config = Config_manager("test2.yaml", "test2.json")
 #print(Config.check_file_type())
-Config.convertor()
-
+#Config = Config_manager()
+#print(Config.check_file_type("test.yaml"))
+if __name__ == '__main__':
+    ConfCli().cmdloop()
