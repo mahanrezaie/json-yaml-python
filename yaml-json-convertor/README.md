@@ -1,5 +1,10 @@
-## yaml to json or json to yaml
+# Configuration manager
 
-### challenge ### : 
-write a python cli app to take a file name and convert it to json or yaml depnds on the file type.
+This app tries to manage json/yaml files and it has a CLI.
 
+To use install pyyaml:
+```bash
+pip install pyyaml
+```
+
+---
