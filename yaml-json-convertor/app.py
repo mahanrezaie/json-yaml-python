@@ -24,6 +24,17 @@ class Config_manager():
             content = f.read()
         return content
 
+    def yaml_load(self, file):
+        with open(file, "r") as f:
+            data = yaml.safe_load(f)
+        return(data)
+
+    def json_load(self, file):
+        with open(file, "r") as f:
+            data = json.loads(f)
+        return(data)
+
+
     def json_to_yaml(self, output_file):
         output_file = open(output_file, "w")
         json_obj = json.loads(self.content)
@@ -85,7 +96,69 @@ class ConfCli(cmd.Cmd, Config_manager):
         return True
 
     def do_update(self, arg):
-        "Update the config by key and value"
+        "Update the config, you can add and "
+        file = get_file("Which file do you want to update: ")
+        file_type = self.check_file_type(file)
+        if file_type == "JSON":
+            data = self.json_load(file)
+        elif file_type == "YAML":
+            data = self.yaml_load(file)
+        else:
+            print("Unsupported file type.")
+            return
+        while True:
+            print("\nCurrent config: ")
+            print(self.read_config(file))
+
+            key = input("Enter the key you want to update or type 'exit':  ")
+            if key.lower() == "exit":
+                break
+            value = input(f"Enter the value for {key}: ")
+            # If nested keys are needed (ex: user.name), split them:
+            if '.' in key:
+                keys = key.split('.')
+                d = data
+                for k in keys[:-1]:
+                    d = d.setdefault(k, {})  # walk to the nested dict
+                d[keys[-1]] = value
+            else:
+                data[key] = value
+                
+            if file_type == "JSON":
+                self.update_json(data, file)
+            elif file_type == "YAML":
+                self.update_yaml(data, file)
+
+    def help_update(self):
+                    print("""
+        Update the config file by changing or adding values.
+        
+        🔹 Usage:
+            update
+        
+        👉 When prompted:
+            - Enter the path to the config file (JSON or YAML).
+            - Enter the key you want to update.
+            - Enter the new value.
+        
+        💡 Nested Keys:
+            To update values inside nested structures, use dot notation.
+        
+            Example:
+                user.name.first
+        
+        This will update:
+            {
+                "user": {
+                    "name": {
+                        "first": "NewValue"
+                    }
+                }
+            }
+        
+        ✅ Type 'exit' to finish and save your changes.
+        """)
+        
 
 def get_file(prompt):
     while True:
