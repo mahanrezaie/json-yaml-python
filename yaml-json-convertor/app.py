@@ -31,7 +31,7 @@ class Config_manager():
 
     def json_load(self, file):
         with open(file, "r") as f:
-            data = json.loads(f)
+            data = json.load(f)
         return(data)
 
 
@@ -61,9 +61,6 @@ class Config_manager():
 
         elif file_type == "YAML":
             self.yaml_to_json(f"{output_file}.json")
-
-        else:
-             print(f"ERROR: the {file} is not a valid yaml or json, please try again.(yaml file should be started with ---)")
 
 
         
